@@ -114,17 +114,25 @@ module.exports.valid = function(req) {
 				}
 				case 'register':
 				{
-					if (!(parseInt(req.body.id, 10) > 0))
+					if (!req.body.email)
 					{
-						errorMsg += "error: id argument is not valid; ";
+						errorMsg += "error: email argument is not valid; ";
+					}
+					if (!req.body.password)
+					{
+						errorMsg += "error: password argument is not valid; ";
 					}
 					break;
 				}
 				case 'login':
 				{
-					if (!(parseInt(req.body.id, 10) > 0))
+					if (!req.body.email)
 					{
-						errorMsg += "error: id argument is not valid; ";
+						errorMsg += "error: email argument is not valid; ";
+					}
+					if (!req.body.password)
+					{
+						errorMsg += "error: password argument is not valid; ";
 					}
 					break;
 				}

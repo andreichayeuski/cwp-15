@@ -16,14 +16,14 @@ module.exports = (Sequelize, config) => {
 	const Fleet = require('../models/fleets')(Sequelize, sequelize);
 	const Motion = require('../models/motions')(Sequelize, sequelize);
 	const Vehicle = require('../models/vehicles')(Sequelize, sequelize);
+	const Managers = require('../models/managers')(Sequelize, sequelize);
 
-	Motion.hasMany(Vehicle, {foreignKey: 'vehicleId'});
-	console.log("1111111111111111111111");
+	Motion.hasMany(Vehicle, {foreignKey: 'vehicleId', sourceKey: 'id'});
 
-	Vehicle.hasMany(Fleet, {foreignKey: 'fleetId'});
+	Vehicle.hasMany(Fleet, {foreignKey: 'fleetId', sourceKey: 'id'});
 
 	return {
-		Fleet, Motion, Vehicle,
+		Fleet, Motion, Vehicle, Managers,
 		sequelize: sequelize,
 		Sequelize: Sequelize,
 	};

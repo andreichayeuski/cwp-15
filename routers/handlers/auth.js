@@ -4,34 +4,52 @@ const bodyParser = require('body-parser');
 const db = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const valid = require("./valid").valid;
+
 router.use(bodyParser.json());
 
 router.post('/register', async (req, res) => {
-	req = req.body;
-	req.password = bcrypt.hashSync(req.password);
-	await db.Auth.create(req)
-		.then(() => {
-			res.end('Registration is succesfull');
-		})
-		.catch(() => {
-			registration.status(501).end('Error registration');
-		});
+	let err = valid(req);
+	if (err === "")
+	{
+		req.body.password = bcrypt.hashSync(req.body.password);
+		await db.Managers.create(req)
+			.then(() => {
+				res.end('Registration is successfully');
+			})
+			.catch(() => {
+				registration.status(501).end('Error registration');
+			});
+	}
+	else
+	{
+		res.status(501).end(err);
+	}
 });
 
 router.post('/login', async (req, res) => {
-	req = req.body;
-	let manager = await db.Auth.find({
-		where: {
-			email: req.email
+	let err = valid(req);
+	if (err === "") {
+		let manager = await db.Managers.find({
+			where: {
+				email: req.body.email
+			}
+		});
+		if (manager && bcrypt.compareSync(req.body.password, manager.password)) {
+			res.end(jwt.sign({
+				id: manager.id,
+				email: req.email
+			}, "secret", {expiresIn: 300}));
 		}
-	});
-	if ((manager) && (bcrypt.compareSync(req.password, manager.password))) {
-		res.end(jwt.sign({
-			id: manager.id,
-			email: req.email
-		}, "secret", {expiresIn: 300}));
+		else
+		{
+			res.status(400).end("Manager is no found");
+		}
 	}
-	else res.status(501).end('Error login');
+	else
+	{
+		res.status(501).end(err);
+	}
 });
 
 module.exports = router;
