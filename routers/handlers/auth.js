@@ -13,12 +13,12 @@ router.post('/register', async (req, res) => {
 	if (err === "")
 	{
 		req.body.password = bcrypt.hashSync(req.body.password);
-		await db.Managers.create(req)
+		await db.Managers.create(req.body)
 			.then(() => {
 				res.end('Registration is successfully');
 			})
 			.catch(() => {
-				registration.status(501).end('Error registration');
+				res.status(501).end('Error registration');
 			});
 	}
 	else

@@ -9,6 +9,7 @@ router.all('/*', async (req, res, next) => {
 	if (h = req.header('Authorization'))
 	{
 		let _h = h.split(' ');
+		console.log(_h);
 		if (_h[0] !== 'Bearer')
 		{
 			res.status(401).send('401: Bearer');
@@ -22,23 +23,31 @@ router.all('/*', async (req, res, next) => {
 				jwt.verify(token, 'secret', async (err, dec) => {
 					if (!err)
 					{
-						await db.Managers.findById(dec.id).then((itm) =>
+						console.log("ok");
+						console.log(dec);
+						await db.Managers.findByPk(dec.id).then((itm) =>
 						{
-							if (itm !== undefined)
+							if (itm)
 							{
+								console.log(itm);
+								console.log("1");
 								req.manager = itm.get({raw: true});
+								next();
 							}
 							else
 							{
+								console.log("2");
 								res.status(403).send('403');
 							}
 						});
 					}
 					else
 					{
-						resp.statusCode = 403;
+						console.log("3");
+						res.statusCode = 403;
+						console.log(err);
+						res.send(err);
 					}
-					next();
 				});
 			}
 			else

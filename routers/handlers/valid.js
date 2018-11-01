@@ -12,7 +12,6 @@ module.exports.valid = function(req) {
 			{
 				case 'read':
 				{
-					console.log((req.params.id));
 					if (!(parseInt(req.params.id, 10) > 0))
 					{
 						errorMsg += "error: id argument is not valid; ";
@@ -35,10 +34,9 @@ module.exports.valid = function(req) {
 				}
 				case 'milage':
 				{
-					console.log((req.params.id));
-					if (!(parseInt(req.params.id, 10) > 0))
+					if (!(parseInt(req.params.vehicleId, 10) > 0))
 					{
-						errorMsg += "error: id argument is not valid; ";
+						errorMsg += "error: vehicleId argument is not valid; ";
 					}
 					break;
 				}
@@ -63,33 +61,36 @@ module.exports.valid = function(req) {
 						}
 						case "motions":
 						{
-							if (!req.body.latitude)
+							let args = ["latitude", "longitude", "time", "vehicleId"];
+							for(let i = 0; i < args.length; i++)
 							{
-								errorMsg += 'error: latitude is not found; ';
-							}
-							if (!req.body.longitude)
-							{
-								errorMsg += "error: longitude is not found; ";
-							}
-							if (!req.body.time)
-							{
-								errorMsg += "error: time is not found; ";
-							}
-							if (!(parseInt(req.body.vehicleId, 10) > 0))
-							{
-								errorMsg += "error: vehicleId argument is not valid; ";
+								if (!(args[i] in req.body))
+								{
+									errorMsg += `error: ${args[i]} argument is not valid; `;
+
+								}
+								else if (args[i].toLowerCase().indexOf("id") !== -1
+									&& !(parseInt(req.body[args[i]], 10) > 0))
+								{
+									errorMsg += `error: ${args[i]} argument is not valid; `;
+								}
 							}
 							break;
 						}
 						case "vehicles":
 						{
-							if (!req.body.name)
+							let args =["name", "fleetId"];
+							for(let i = 0; i < args.length; i++)
 							{
-								errorMsg += "error: name is not found; ";
-							}
-							if (!(parseInt(req.body.fleetId, 10) > 0))
-							{
-								errorMsg += "error: fleetId argument is not valid; ";
+								if (!(args[i] in req.body))
+								{
+									errorMsg += `error: ${args[i]} argument is not valid; `;
+								}
+								else if (args[i].toLowerCase().indexOf("id") !== -1
+											&& !(parseInt(req.body[args[i]], 10) > 0))
+								{
+									errorMsg += `error: ${args[i]} argument is not valid; `;
+								}
 							}
 							break;
 						}
@@ -114,25 +115,25 @@ module.exports.valid = function(req) {
 				}
 				case 'register':
 				{
-					if (!req.body.email)
+					let args =["email", "password"];
+					for(let i = 0; i < args.length; i++)
 					{
-						errorMsg += "error: email argument is not valid; ";
-					}
-					if (!req.body.password)
-					{
-						errorMsg += "error: password argument is not valid; ";
+						if (!(args[i] in req.body))
+						{
+							errorMsg += `error: ${args[i]} argument is not valid; `;
+						}
 					}
 					break;
 				}
 				case 'login':
 				{
-					if (!req.body.email)
+					let args =["email", "password"];
+					for(let i = 0; i < args.length; i++)
 					{
-						errorMsg += "error: email argument is not valid; ";
-					}
-					if (!req.body.password)
-					{
-						errorMsg += "error: password argument is not valid; ";
+						if (!(args[i] in req.body))
+						{
+							errorMsg += `error: ${args[i]} argument is not valid; `;
+						}
 					}
 					break;
 				}
@@ -143,6 +144,10 @@ module.exports.valid = function(req) {
 	if (errorMsg === "")
 	{
 		console.log("all is good");
+	}
+	else
+	{
+		console.log("not valid - " + errorMsg)
 	}
 	return errorMsg;
 };
